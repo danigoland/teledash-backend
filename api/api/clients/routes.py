@@ -80,14 +80,12 @@ def get_clients_router(app):
                 api_id=client.api_id,
                 api_hash=client.api_hash,
                 phone_number=client.phone_number,
-                test_mode=False,
             )
         except Exception as e:
-            # TODO: use logger
-            print(e)
+            print(e, client)
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Client could not be created",
+                detail=str(e),
             )
 
         client_dict = client.dict(exclude_none=True, by_alias=True)
@@ -101,8 +99,11 @@ def get_clients_router(app):
                 detail="Client could not be created",
             )
 
-        # Info: Authentication data will be returned but won't be stored in DB.
-        client_dict["auth"] = auth
+        # this authentication info will be returned but won't be stored in DB.
+        client_dict["auth"] = {
+            "phone_code_hash": auth.phone_code_hash,
+            "type": str(auth.type),
+        }
 
         return ClientCreate(**client_dict)
 
@@ -137,15 +138,14 @@ def get_clients_router(app):
                 phone_code=session.phone_code,
             )
         except Exception as e:
-            # TODO: use logger
             print(e)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Client could not be authenticated",
+                detail=str(e),
             )
 
         client_doc.session_hash = auth["session_hash"]
-        client_doc.user_id = auth["user"]["id"]
+        client_doc.user_id = auth["user"].id
 
         response = await database.clients.update_one(
             {"_id": id}, {"$set": client_doc.dict(by_alias=True)}

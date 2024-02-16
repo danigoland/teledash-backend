@@ -1,4 +1,4 @@
-from typing import List, Literal
+from typing import List
 
 from pydantic import BaseSettings, validator
 
@@ -38,7 +38,7 @@ class Settings(BaseSettings):
 
     # OCR
     ocr_enabled: bool
-    ocr_model_type: Literal["fast", "best", "custom"]
+    ocr_model_type: List[str]
 
     # ASR
     asr_enabled: bool
