@@ -1,6 +1,6 @@
 celery[redis]==5.3.6
 pymongo==4.6.1
-pydantic==2.6.1
+pydantic==1.9.0
 gcld3==3.0.13
 pytesseract==0.3.10
 vosk==0.3.45
