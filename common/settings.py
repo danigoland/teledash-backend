@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 from pydantic import BaseSettings, validator
 
@@ -38,7 +38,7 @@ class Settings(BaseSettings):
 
     # OCR
     ocr_enabled: bool
-    ocr_model_type: List[str]
+    ocr_model_type: Any
 
     # ASR
     asr_enabled: bool
@@ -47,15 +47,6 @@ class Settings(BaseSettings):
 
     # API
     api_allow_origins: List[str]
-
-    @validator("save_attachment_types")
-    def match_attachment_type(cls, v):
-        allowed_types = MessageAttachmentType._member_names_
-        if any(t not in allowed_types for t in v):
-            raise ValueError(
-                '"SAVE_ATTACHMENT_TYPES" contains invalid attachment type(s)'
-            )
-        return v
 
 
 settings = Settings()  # type: ignore
